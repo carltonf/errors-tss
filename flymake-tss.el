@@ -1,12 +1,12 @@
-(require 'tss)
+(require 'etss)
 
-(defconst flymake-tss--err-line-pattern
+(defconst flymake-etss--err-line-pattern
   '("\\`\\(.+?\\.ts\\) (\\([0-9]+\\),\\([0-9]+\\)): \\(.+\\)" 1 2 3 4)
-  "Error line pattern, converted from `tss--get-errors's format by `'")
+  "Error line pattern, converted from `etss--get-errors's format by `'")
 
-(defun flymake-tss--err-formatter (ret)
-  "Format RET from `tss--get-errors' into
-`flymake-tss--err-line-pattern'."
+(defun flymake-etss--err-formatter (ret)
+  "Format RET from `etss--get-errors' into
+`flymake-etss--err-line-pattern'."
   (mapcar (lambda (e)
             (let* ((file (cdr (assoc 'file e)))
                    (start (cdr (assoc 'start e)))
@@ -17,18 +17,18 @@
               (format "%s (%d,%d): %s" file (or line 0) (or col 0) text)))
           ret))
 
-(defun flymake-tss-init ()
+(defun flymake-etss-init ()
   (let* ((errors-file (flymake-init-create-temp-buffer-copy
                        'flymake-create-temp-inplace)
                       ;; the above one is inefficient, but can use built-in clean function, so ;P
                       ;;
                       ;; (flymake-create-temp-inplace (buffer-file-name)
-                      ;;                              "flymake-tss")
+                      ;;                              "flymake-etss")
                       ))
-    (let ((errors (tss--get-errors))
+    (let ((errors (etss--get-errors))
           res)
       (with-temp-file errors-file
-        (loop for line in (flymake-tss--err-formatter errors)
+        (loop for line in (flymake-etss--err-formatter errors)
               do (insert line "\n"))))
     ;; TODO a workaround on the limit of `flymake' tool, it requires subprocess
     ;; anyway. (Actually `flycheck' also has this requirement...)
@@ -36,14 +36,14 @@
 
 
 ;;;: Configurations
-;; (require 'flymake-tss)
-;; (defun flymake-tss-configure ())
-;; (add-to-list 'flymake-err-line-patterns flymake-tss--err-line-pattern)
+;; (require 'flymake-etss)
+;; (defun flymake-etss-configure ())
+;; (add-to-list 'flymake-err-line-patterns flymake-etss--err-line-pattern)
 ;; (add-to-list 'flymake-allowed-file-name-masks
 ;;              '(".+\\.ts$"
-;;                flymake-tss-init
+;;                flymake-etss-init
 ;;                flymake-simple-cleanup
 ;;                flymake-get-real-file-name))
 ;;; `flymake-no-changes-timeout' should be short for things to be useful.
 
-(provide 'flymake-tss)
+(provide 'flymake-etss)
