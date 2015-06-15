@@ -17,10 +17,12 @@
               (format "%s (%d,%d): %s" file (or line 0) (or col 0) text)))
           ret))
 
+;; NOTE `flymake-no-changes-timeout' need to be short for things to be useful.
 (defun flymake-etss-init ()
   (let* ((errors-file (flymake-init-create-temp-buffer-copy
                        'flymake-create-temp-inplace)
-                      ;; the above one is inefficient, but can use built-in clean function, so ;P
+                      ;; the above one is inefficient, but can use built-in
+                      ;; clean function, so ;P
                       ;;
                       ;; (flymake-create-temp-inplace (buffer-file-name)
                       ;;                              "flymake-etss")
@@ -35,15 +37,13 @@
     (list "cat" (list errors-file))))
 
 
-;;;: Configurations
-;; (require 'flymake-etss)
-;; (defun flymake-etss-configure ())
-;; (add-to-list 'flymake-err-line-patterns flymake-etss--err-line-pattern)
-;; (add-to-list 'flymake-allowed-file-name-masks
-;;              '(".+\\.ts$"
-;;                flymake-etss-init
-;;                flymake-simple-cleanup
-;;                flymake-get-real-file-name))
-;;; `flymake-no-changes-timeout' should be short for things to be useful.
+(defun flymake-etss-setup ()
+  "Setup `flymake-etss'."
+  (add-to-list 'flymake-err-line-patterns flymake-etss--err-line-pattern)
+  (add-to-list 'flymake-allowed-file-name-masks
+               '(".+\\.ts$"
+                 flymake-etss-init
+                 flymake-simple-cleanup
+                 flymake-get-real-file-name)))
 
 (provide 'flymake-etss)
